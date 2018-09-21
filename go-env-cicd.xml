@@ -1,0 +1,93 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty plugin="gitlab-plugin@1.5.5">
+      <gitLabConnection></gitLabConnection>
+    </com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty>
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.28">
+      <autoRebuild>false</autoRebuild>
+      <rebuildDisabled>false</rebuildDisabled>
+    </com.sonyericsson.rebuild.RebuildSettings>
+  </properties>
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.8.0">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <url>http://192.168.65.131:14531/root/go-env-cicd</url>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>*/master</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <submoduleCfg class="list"/>
+    <extensions/>
+  </scm>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers>
+    <com.dabsquared.gitlabjenkins.GitLabPushTrigger plugin="gitlab-plugin@1.5.5">
+      <spec></spec>
+      <triggerOnPush>true</triggerOnPush>
+      <triggerOnMergeRequest>true</triggerOnMergeRequest>
+      <triggerOnPipelineEvent>false</triggerOnPipelineEvent>
+      <triggerOnAcceptedMergeRequest>false</triggerOnAcceptedMergeRequest>
+      <triggerOnClosedMergeRequest>false</triggerOnClosedMergeRequest>
+      <triggerOnApprovedMergeRequest>true</triggerOnApprovedMergeRequest>
+      <triggerOpenMergeRequestOnPush>never</triggerOpenMergeRequestOnPush>
+      <triggerOnNoteRequest>true</triggerOnNoteRequest>
+      <noteRegex>Jenkins please retry a build</noteRegex>
+      <ciSkip>true</ciSkip>
+      <skipWorkInProgressMergeRequest>true</skipWorkInProgressMergeRequest>
+      <setBuildDescription>true</setBuildDescription>
+      <branchFilterType>All</branchFilterType>
+      <includeBranchesSpec></includeBranchesSpec>
+      <excludeBranchesSpec></excludeBranchesSpec>
+      <targetBranchRegex></targetBranchRegex>
+      <secretToken>{AQAAABAAAAAQuY23JHLkNXSIy3/HcvDcT+Q8IjM1ebd6itaPQ0IDOE8=}</secretToken>
+    </com.dabsquared.gitlabjenkins.GitLabPushTrigger>
+  </triggers>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <com.cloudbees.dockerpublish.DockerBuilder plugin="docker-build-publish@1.3.2">
+      <server plugin="docker-commons@1.13"/>
+      <registry plugin="docker-commons@1.13">
+        <credentialsId>node-sample</credentialsId>
+      </registry>
+      <repoName>hackathonhpe/go-env-cicd</repoName>
+      <noCache>false</noCache>
+      <forcePull>false</forcePull>
+      <skipBuild>false</skipBuild>
+      <skipDecorate>false</skipDecorate>
+      <repoTag>0.0.${BUILD_ID}</repoTag>
+      <skipPush>false</skipPush>
+      <createFingerprint>true</createFingerprint>
+      <skipTagLatest>false</skipTagLatest>
+      <buildAdditionalArgs></buildAdditionalArgs>
+      <forceTag>false</forceTag>
+    </com.cloudbees.dockerpublish.DockerBuilder>
+  </builders>
+  <publishers>
+    <com.mesosphere.velocity.marathon.MarathonRecorder plugin="marathon@1.6.0">
+      <url>http://m1.dcos:8080</url>
+      <uris/>
+      <labels/>
+      <env/>
+      <docker>hackathonhpe/go-env-cicd:0.0.${BUILD_ID}</docker>
+      <dockerForcePull>false</dockerForcePull>
+      <credentialsId></credentialsId>
+      <forceUpdate>false</forceUpdate>
+    </com.mesosphere.velocity.marathon.MarathonRecorder>
+  </publishers>
+  <buildWrappers>
+    <hudson.plugins.timestamper.TimestamperBuildWrapper plugin="timestamper@1.8.9"/>
+  </buildWrappers>
+</project>
+
